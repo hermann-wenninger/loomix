@@ -6,8 +6,6 @@ type User = {
   id: number;
   name: string;
   email: string;
-  password: string;
-  avatar: string;
 };
 
 function App() {
@@ -16,8 +14,6 @@ function App() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [avatar, setAvatar] = useState<string>("");
 
   async function getUsers() {
     try {
@@ -33,16 +29,14 @@ function App() {
     }
   }
 
-  async function setUser(user: Pick<User, "name" | "email" | "password" | "avatar">) {
+  async function setUser(user: Omit<User, "id">) {
     try {
       setIsLoadingUsers(true);
       const db = await Database.load("sqlite:test.db");
 
-      await db.execute("INSERT INTO users (name, email,password,avatar) VALUES ($1, $2,$3,$4)", [
+      await db.execute("INSERT INTO users (name, email) VALUES ($1, $2)", [
         user.name,
         user.email,
-        user.password,
-        user.avatar,  
       ]);
 
       getUsers().then(() => setIsLoadingUsers(false));
@@ -69,7 +63,7 @@ function App() {
             className="row"
             onSubmit={(e) => {
               e.preventDefault();
-              setUser({ name, email, password, avatar });
+              setUser({ name, email });
               getUsers();
             }}>
             <input
@@ -83,17 +77,6 @@ function App() {
               onChange={(e) => setEmail(e.currentTarget.value)}
               placeholder="Enter an email..."
             />
-            <input
-              type="password"
-              id="password-input"
-              onChange={(e) => setPassword(e.currentTarget.value)}
-              placeholder="Enter a password..."
-            />
-            <input
-              id="avatar-input"
-              onChange={(e) => setAvatar(e.currentTarget.value)}
-              placeholder="Enter an avatar URL..."
-            />
             <button type="submit">Add User</button>
           </form>
 
@@ -106,8 +89,6 @@ function App() {
                   <th>ID</th>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Password</th>
-                  <th>Avatar</th>
                 </tr>
               </thead>
               <tbody>
@@ -116,8 +97,6 @@ function App() {
                     <td>{user.id}</td>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
-                    <td>{user.password}</td>
-                    <td>{user.avatar}</td>
                   </tr>
                 ))}
               </tbody>
