@@ -1,11 +1,25 @@
 use tauri_plugin_sql::{Migration, MigrationKind};  
 mod sysvar;
+use ollama-rs::Ollama;
+use tokio::sync::Mutex;
 
 #[tauri::command]  
 fn greet(name: &str) -> String {  
     format!("Hello, {}! You've been greeted from Rust!", name)  
 }
 
+pub struct AppState {  
+    pub ollama: Mutex<Ollama>,  
+}
+#[derive(Serialize)]
+struct ChatResponse{
+    message:String,
+}
+#[derive(Deserialize)]
+struct ChatRequest{
+    model:String,
+    messages:Vec<ChatMessage>,
+}
 #[cfg_attr(mobile, tauri::mobile_entry_point)]  
 pub fn run() {  
     let migrations = vec![  
@@ -27,6 +41,7 @@ pub fn run() {
                 .add_migrations("sqlite:test.db", migrations)
                 .build()
         )
+        .manage(AppState {  ollama: Mutex::new(Ollama::default()) })
         .plugin(tauri_plugin_shell::init())  
         .invoke_handler(tauri::generate_handler![
             greet,
