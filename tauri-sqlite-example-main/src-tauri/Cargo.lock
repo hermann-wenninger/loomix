@@ -4484,6 +4484,7 @@ dependencies = [
  "actix",
  "actix-cors",
  "actix-web",
+ "once_cell",
  "serde",
  "serde_json",
  "tauri",

@@ -52,7 +52,6 @@ function App() {
 
   return (
     <main className="container">
-      <h1>Welcome to Tauri + SQLite</h1>
 
       {isLoadingUsers ? (
         <div>Loading users...</div>

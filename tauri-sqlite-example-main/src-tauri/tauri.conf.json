@@ -13,8 +13,13 @@
     "windows": [
       {
         "title": "tauri-sqlite",
-        "width": 800,
-        "height": 600
+        "width": 300,
+        "height": 200,
+        "x": 1600,
+        "y": 10,
+        "resizable": true,
+        "fullscreen": false,
+        "visible": true
       }
     ],
     "security": {
