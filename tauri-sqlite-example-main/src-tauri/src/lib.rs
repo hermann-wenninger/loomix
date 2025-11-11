@@ -30,6 +30,7 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())  
         .invoke_handler(tauri::generate_handler![
             greet,
+            sysvar::get_keys,
             
             ])  
         .run(tauri::generate_context!())  

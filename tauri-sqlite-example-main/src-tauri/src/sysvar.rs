@@ -13,7 +13,7 @@ pub static COHERCE_KEY:Lazy<String> = Lazy::new(|| {env::var("COHERE_API_KEY").u
 pub static DEEPSEEK_KEY:Lazy<String> = Lazy::new(|| {env::var("DEEPSEEK_API_KEY").unwrap_or_default()});
 pub static GOOGLE_KEY: Lazy<String> = Lazy::new(|| {env::var("GOOGLE_API_KEY").unwrap_or_default()});
 pub static IIELEVEN_KEY: Lazy<String> = Lazy::new(|| {env::var("IIELEVENLABS_API_KEY").unwrap_or_default()});
-pub static SERPAPI_KEY: Lazy<String> = Lazy::new(|| {env::var("SERPAPI_API_KEY").unwrap_or_default()});
+pub static SERPAPI_KEY: Lazy<String> = Lazy::new(|| {env::var("SERP_API_KEY").unwrap_or_default()});
 
 
 #[command]
@@ -30,6 +30,5 @@ serde_json::json!({
     "GOOGLE_KEY": *GOOGLE_KEY,
     "IIELEVEN_KEY": *IIELEVEN_KEY,
     "SERPAPI_KEY": *SERPAPI_KEY,
-})
-    }
+})}
   
