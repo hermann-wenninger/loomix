@@ -20,6 +20,36 @@ struct ChatRequest{
     model:String,
     messages:Vec<ChatMessage>,
 }
+#[tauri::command]
+async fn get_models(state:State<'_,AppState>) -> Result<Vec<String>,String>{
+let models ={
+    let client = state.ollama.lock().await;
+    client.list_local_models()
+    .await
+    .map_err(|e|format!("Failed to list models: {:?}",e))?
+}
+
+    Ok(models.iter().map(|m| m.name.clone()).collect())
+}
+
+async fn chat(state:State<'_,AppState>,request:ChatRequest, on_stream:Channel<ChatResponse>) -> Result<(),String>{
+   
+        let mut client = state.ollama.lock().await;
+        let chat_request = ChatMessageRequest::new(request.model,request.messages);
+        let mut stream = client.send_chat_mesages_stream(chat_request)
+        .await
+        .map_err(|e|format!("Chat stream failed: {:?}",e))?;
+        
+        while let Some(response) = stream.next().await {
+            let response = response.map_err(|e| format!("Stream error: {:?}",e))?;
+            let chat_response = ChatResponse{
+                message:response.message.content,
+            };
+            on_stream.send(chat_response).await.map_err(|e|format!("Failed to send response: {:?}",e))?;
+}
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]  
 pub fn run() {  
     let migrations = vec![  
