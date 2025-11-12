@@ -32,6 +32,7 @@ let models ={
     Ok(models.iter().map(|m| m.name.clone()).collect())
 }
 
+#[tauri::command]
 async fn chat(state:State<'_,AppState>,request:ChatRequest, on_stream:Channel<ChatResponse>) -> Result<(),String>{
    
         let mut client = state.ollama.lock().await;
@@ -75,6 +76,8 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())  
         .invoke_handler(tauri::generate_handler![
             greet,
+            get_models,
+            chat,
             sysvar::get_keys,
             
             ])  
