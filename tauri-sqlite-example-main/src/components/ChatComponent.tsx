@@ -1,5 +1,5 @@
-import { useEffect,useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { useEffect,useState, ChangeEvent, FormEvent } from "react";
+import { invoke, Channel } from "@tauri-apps/api/core";
 
 
 interface ChatMessage{
@@ -28,7 +28,75 @@ const ChatComponent : React.FC = () => {
             } catch (error) {
                 console.error("Fehler beim Abrufen der Modelle:", error);
             }
+        };
+        fetchedModels();
+    }, []);
 
-    }
+    const sendMessage = async (e:FormEvent) :Promise<void> => {
+    e.preventDefault(); 
+        if (!input.trim()||!selectedModel ) return;
+        const userMessage:ChatMessage = { role: "user", content: input.trim() };
+        setMessages(prev => [...prev, userMessage]);
+        setInput("")
+        const channel = new Channel<ChatResponse>();
+        channel.onmessage = (data:ChatResponse) => {
+            const messageContent = data.message;
+            setMessages(prev =>{
+                const lastMsg =  prev[prev.length -1];
+                if(lastMsg && lastMsg.role === "assistant"){
+                    return [
+                        ...prev.slice(0, -1),
+                        { role: "assistant", content: lastMsg.content + messageContent }
+                    ];
+                }
+                return [...prev, { role: "assistant", content: messageContent } ];
+            });
 
+        };
+        try {
+            await invoke("chat", { 
+                request:{
+                model: selectedModel, 
+                messages: [...messages,userMessage],
+            },
+            onStream: channel,
+        });
+        } catch (error) {
+            console.error("Fehler beim Senden der Nachricht:", error);
+            setMessages(prev => [
+                ...prev,
+                 { role: "assistant", content: "Fehler beim Senden der Nachricht." }
+                ]);
+        }
+};
+const handleInputChange =(e:ChangeEvent<HTMLInputElement>) :void => {
+    setInput(e.target.value);   
+};
+const handleSelectChange = (e:ChangeEvent<HTMLSelectElement>) :void => {
+    setSelectedModel(e.target.value);
+};
+    return (
+        <div className="chat-container">
+            <div className="chat-messages">
+
+         
+            {messages.map((msg, index) => (
+                <div key={index} className={`message ${msg.role}`}>
+                  <span>{msg.role}</span>
+                    <p>{msg.content}</p>
+                </div>
+            ))}
+            </div>
+            <form onSubmit={sendMessage}>
+                <select value={selectedModel} onChange={handleSelectChange}>
+                    {models.map((model) => (
+                        <option key={model} value={model}>
+                            {model}
+                        </option>
+                    ))}
+                </select>
+           </form>
+            </div>
+    );
+}
     export default ChatComponent;
