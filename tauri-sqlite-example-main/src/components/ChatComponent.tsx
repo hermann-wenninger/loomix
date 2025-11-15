@@ -38,7 +38,9 @@ const ChatComponent : React.FC = () => {
         const userMessage:ChatMessage = { role: "user", content: input.trim() };
         setMessages(prev => [...prev, userMessage]);
         setInput("")
+
         const channel = new Channel<ChatResponse>();
+
         channel.onmessage = (data:ChatResponse) => {
             const messageContent = data.message;
             setMessages(prev =>{
@@ -88,13 +90,22 @@ const handleSelectChange = (e:ChangeEvent<HTMLSelectElement>) :void => {
             ))}
             </div>
             <form onSubmit={sendMessage}>
-                <select value={selectedModel} onChange={handleSelectChange}>
-                    {models.map((model) => (
-                        <option key={model} value={model}>
-                            {model}
-                        </option>
+                <select id="inline-model-select"
+                 value={selectedModel} 
+                 onChange={handleSelectChange}>
+                {models.map((model) => (
+                <option key={model} value={model}>
+                    {model}
+                </option>
                     ))}
                 </select>
+                <input
+                    type="text"
+                    value={input}
+                    onChange={handleInputChange}
+                    placeholder="Type your message..."
+                />
+                <button type="submit">Send</button>
            </form>
             </div>
     );

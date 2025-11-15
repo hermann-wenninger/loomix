@@ -1,7 +1,19 @@
 use tauri_plugin_sql::{Migration, MigrationKind};  
 mod sysvar;
-use ollama-rs::Ollama;
+use ollama_rs::Ollama;
 use tokio::sync::Mutex;
+use serde::Deserialize;
+use serde::Serialize;
+use tauri::State;
+//use ollama_rs::chat::{ChatMessage,ChatMessageRequest};
+//use futures::StreamExt;
+//use tauri::async_runtime::Channel;
+use tauri::ipc::Channel;
+use ollama_rs::generation::chat::request::ChatMessageRequest;
+use ollama_rs::generation::chat::ChatMessage;
+use futures_util::StreamExt;
+
+
 
 #[tauri::command]  
 fn greet(name: &str) -> String {  
@@ -27,17 +39,17 @@ let models ={
     client.list_local_models()
     .await
     .map_err(|e|format!("Failed to list models: {:?}",e))?
-}
+};
 
-    Ok(models.iter().map(|m| m.name.clone()).collect())
+    Ok(models.into_iter().map(|m| m.name.clone()).collect())
 }
 
 #[tauri::command]
 async fn chat(state:State<'_,AppState>,request:ChatRequest, on_stream:Channel<ChatResponse>) -> Result<(),String>{
    
-        let mut client = state.ollama.lock().await;
+        let client = state.ollama.lock().await;
         let chat_request = ChatMessageRequest::new(request.model,request.messages);
-        let mut stream = client.send_chat_mesages_stream(chat_request)
+        let mut stream = client.send_chat_messages_stream(chat_request)
         .await
         .map_err(|e|format!("Chat stream failed: {:?}",e))?;
         
@@ -46,7 +58,7 @@ async fn chat(state:State<'_,AppState>,request:ChatRequest, on_stream:Channel<Ch
             let chat_response = ChatResponse{
                 message:response.message.content,
             };
-            on_stream.send(chat_response).await.map_err(|e|format!("Failed to send response: {:?}",e))?;
+            on_stream.send(chat_response).map_err(|e|format!("Failed to send response: {:?}",e))?;
 }
     Ok(())
 }
