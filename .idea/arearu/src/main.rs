@@ -1,13 +1,16 @@
-fn parsenum(s:Vec<String>)->String{
+fn parsenum(s:Vec<String>)-> String{
     let mut sammler:i32 = 0;
     for k in s{
-        sammler += to_int(&k);
+        sammler += match to_int(&k){
+            Some(v)=>v,
+            None=>0,
+        };
     }
     sammler.to_string()
 }
 
-fn to_int(s:&String)->i32{
-    s.parse::<i32>().unwrap_or(0)
+fn to_int(s:&String)->Option<i32>{
+    s.parse::<i32>().ok()
 }
 
 fn main() {
