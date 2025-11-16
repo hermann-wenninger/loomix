@@ -11,7 +11,7 @@ fn to_int(s:&String)->i32{
 }
 
 fn main() {
-    let numvec = vec!["10".to_string(),"20".to_string(),"30".to_string()];
+    let numvec = vec!["10".to_string(),"20".to_string(),"30".to_string(),"abc".to_string()];
     let result = parsenum(numvec);
     println!("The sum is: {}", result);
 }
