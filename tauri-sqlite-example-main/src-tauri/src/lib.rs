@@ -64,7 +64,7 @@ pub fn run() {
             commands::ollama_chat,
             
             ])  
-        .setup(|app| {
+        .setup(|_| {
                 // Optional: print configured OLLAMA_URL
         let cfg = std::env::var("OLLAMA_URL").unwrap_or_else(|_| "http://127.0.0.1:11434".into());
         println!("OLLAMA_URL = {}", cfg);

@@ -1,20 +1,15 @@
-fn parsenum(s:Vec<String>)-> String{
-    let mut sammler:i32 = 0;
-    for k in s{
-        sammler += match to_int(&k){
-            Some(v)=>v,
-            None=>0,
-        };
-    }
-    sammler.to_string()
-}
-
-fn to_int(s:&String)->Option<i32>{
-    s.parse::<i32>().ok()
-}
+use std::thread;
+use std::time::Duration;
 
 fn main() {
-    let numvec = vec!["10".to_string(),"20".to_string(),"30".to_string(),"abc".to_string()];
-    let result = parsenum(numvec);
-    println!("The sum is: {}", result);
+    thread::spawn(||{
+        for i in 1..10{
+            println!("Hello, from thread{}", i);
+            thread::sleep(Duration::from_secs(1));
+        }
+    });
+    for i in 1..30{
+        println!("Hello from main thread! {}", i);
+        thread::sleep(Duration::from_secs(1));
+    }
 }

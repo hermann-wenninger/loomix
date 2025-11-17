@@ -42,7 +42,7 @@ return Err(format!("LLM returned HTTP {}", resp.status()));
 let text = resp.text().map_err(|e| e.to_string())?;
 
 
-if let Ok(parsed): Result<LlmResponse, _> = serde_json::from_str(&text) {
+if let Ok(parsed)| Result::<LlmResponse, _> = serde_json::from_str(&text) {
 Ok(parsed.reply)
 } else {
 // return raw body as best-effort
