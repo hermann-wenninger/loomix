@@ -16,9 +16,10 @@ fn main() {
         thread::sleep(Duration::from_secs(1));
     }
   let mut k = Arc::new(Mutex::new(0));
+  let val = k.clone();
   let h2 =  thread::spawn(move||{
         for i in 1..=x{
-            let mut k_guard = k.lock().unwrap();
+            let mut k_guard = val.lock().unwrap();
             *k_guard += i;
             println!("Hello from moved spawned thread! {}", i);
             thread::sleep(Duration::from_secs(1));
