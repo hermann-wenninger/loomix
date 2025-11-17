@@ -1,32 +1,15 @@
-use std::thread;
-use std::time::Duration;
-use std::sync::{Arc, Mutex};
-
 fn main() {
-    let x = 50;
- let h1 =  thread::spawn(|| {
-    for i in 1..20{
-        println!("Hello from spawned thread! {}", i);
-        thread::sleep(Duration::from_secs(1)); 
-
-    }
-   });
-    for i in 1..=30{
-        println!("Hello from main thread! {}", i);
-        thread::sleep(Duration::from_secs(1));
-    }
-  let mut k = Arc::new(Mutex::new(0));
-  let val = k.clone();
-  let h2 =  thread::spawn(move||{
-        for i in 1..=x{
-            let mut k_guard = val.lock().unwrap();
-            *k_guard += i;
-            println!("Hello from moved spawned thread! {}", i);
-            thread::sleep(Duration::from_secs(1));
-        }
-
-    });
-    h1.join().unwrap();
-    h2.join().unwrap();
-    println!("Final value of k: {}", *k.lock().unwrap());
+ let mut a: [i8; 5] = [5, 4, 3, 2, 1];
+a[2] = 0;
+println!("a: {a:?}");
+fn get_index() -> usize {
+4
+}
+let index = get_index();
+println!("Index: {index}");
+println!("Element at index {}: {}", index, a[index]);
+let xyz:(i8,i8 bool,i32,String) = (1,2,true,45,"hello".to_string());
+println!("Tuple: {:?}", xyz);
+let (x,y,z,b,s) = xyz;
+println!("Destructured: x={}, y={}, z={}, b={}, s={}", x,y,z,b,s);
 }
