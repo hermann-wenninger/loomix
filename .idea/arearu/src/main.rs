@@ -6,4 +6,5 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
  let content = fs::read_to_string(file_path)?;
  println!("File content: {}", content);
  Ok(())
+ //why OK(())?
 }
